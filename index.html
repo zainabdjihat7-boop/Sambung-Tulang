@@ -9,8 +9,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Skor Domino">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" href="icon-192.png?v=1">
-<link rel="apple-touch-icon" href="icon-192.png?v=1">
+<link rel="icon" type="image/png" href="icon-192.png?v=2">
+<link rel="apple-touch-icon" href="icon-192.png?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -25,7 +25,9 @@ body { position: fixed; inset: 0; user-select: none; -webkit-user-select: none; 
 button { font: inherit; color: inherit; }
 
 /* ---------- Papan ---------- */
-.board { position: absolute; inset: 0; display: grid; gap: 2px; background: #0c0c11; }
+.app { position: absolute; inset: 0; display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 1fr); gap: 2px; background: #0c0c11; }
+@media (orientation: portrait) { .app { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 3fr) minmax(0, 1fr); } }
+.board { position: relative; min-width: 0; min-height: 0; display: grid; gap: 2px; background: #0c0c11; }
 .board[data-n="4"] { grid-template: 1fr 1fr / 1fr 1fr; }
 .board[data-n="2"] { grid-template: 1fr 1fr / 1fr; }
 .board[data-n="3"] { grid-template: 1fr 1fr 1fr / 1fr; }
@@ -61,28 +63,25 @@ button { font: inherit; color: inherit; }
 .lim { animation: lim .3s; }
 @keyframes lim { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
 
-/* ---------- Hub tengah ---------- */
-.hub {
-  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 5;
-  display: grid; gap: 6px; justify-items: center; padding: 8px 10px; border-radius: 20px;
-  background: rgba(14, 14, 20, .78); border: 1px solid rgba(255,255,255,.16);
-  box-shadow: 0 10px 30px rgba(0,0,0,.4);
-  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-}
-.board[data-n="3"] ~ .hub { top: auto; bottom: calc(10px + env(safe-area-inset-bottom)); transform: translate(-50%, 0); }
-.timer { display: flex; align-items: center; gap: 8px; padding: 4px 12px; border: 0; border-radius: 14px; background: rgba(255,255,255,.1); cursor: pointer; }
-.timer .tm { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+/* ---------- Panel kanan ---------- */
+.side { container-type: inline-size; min-width: 0; min-height: 0; display: flex; flex-direction: column; gap: 8px; padding: 8px; padding-right: calc(8px + env(safe-area-inset-right)); background: #0e0e14; }
+.tb { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: center; }
+.timer { flex: 1 1 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 6px 12px; border: 0; border-radius: 14px; background: rgba(255,255,255,.1); cursor: pointer; }
+.timer .tm { font-size: clamp(22px, 9cqw, 40px); font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: .02em; }
 .timer .ic { font-size: 14px; width: 16px; text-align: center; }
 .timer.run .ic { color: #5df29a; }
 .timer.max .tm { color: #ffb347; }
-.row { display: flex; align-items: center; gap: 6px; }
-.kc { font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: .04em; }
-.kc b { color: #fff; font-size: 15px; min-width: 20px; display: inline-block; text-align: center; }
-.ib { width: 34px; height: 34px; border-radius: 50%; border: 0; display: grid; place-items: center; background: rgba(255,255,255,.12); font-size: 17px; line-height: 1; cursor: pointer; }
+@media (orientation: portrait) { .timer { flex: 1 1 auto; } }
+.ib { width: 36px; height: 36px; border-radius: 50%; border: 0; display: grid; place-items: center; background: rgba(255,255,255,.12); font-size: 18px; line-height: 1; cursor: pointer; }
 .ib:active { transform: scale(.92); }
 .ib:disabled { opacity: .3; }
-.ib.sm { width: 26px; height: 26px; font-size: 15px; }
-.credit { position: absolute; left: 0; right: 0; top: calc(3px + env(safe-area-inset-top)); z-index: 4; text-align: center; font-size: 10px; font-weight: 600; letter-spacing: .14em; color: #fff; opacity: .75; text-shadow: 0 1px 3px rgba(0,0,0,.5); pointer-events: none; }
+.hh { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 700; padding: 0 2px; }
+.plog { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; touch-action: pan-y; }
+.plog .log li { grid-template-columns: auto minmax(0, 1fr) auto auto; padding: 6px 8px; gap: 8px; font-size: 13px; }
+.plog .empty { padding: 14px 8px; font-size: 13px; }
+@container (max-width: 230px) { .plog .tt { display: none; } .plog .log li { grid-template-columns: minmax(0, 1fr) auto auto; } }
+.credit { position: absolute; left: 0; right: 25%; top: calc(3px + env(safe-area-inset-top)); z-index: 4; text-align: center; font-size: 10px; font-weight: 600; letter-spacing: .14em; color: #fff; opacity: .75; text-shadow: 0 1px 3px rgba(0,0,0,.5); pointer-events: none; }
+@media (orientation: portrait) { .credit { right: 0; } }
 .toast { position: absolute; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom)); transform: translate(-50%, 20px); z-index: 30; background: rgba(14,14,20,.92); color: #fff; padding: 9px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; opacity: 0; pointer-events: none; transition: .2s; max-width: 90%; text-align: center; }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
@@ -140,27 +139,26 @@ button { font: inherit; color: inherit; }
 </style>
 </head>
 <body>
-<div class="board" id="board" data-n="4"></div>
-<div class="credit">Created by @syahruldj__</div>
-
-<div class="hub" id="hub">
-  <button class="timer" id="timerBtn" type="button" aria-label="Mulai atau jeda waktu"><span class="ic" id="tIc">▶</span><span class="tm" id="tTm">00:00</span></button>
-  <div class="row kc">Kocokan
-    <button class="ib sm" id="kMin" type="button" aria-label="Kurangi kocokan">−</button><b id="kVal">0</b><button class="ib sm" id="kPlus" type="button" aria-label="Tambah kocokan">+</button>
-  </div>
-  <div class="row">
-    <button class="ib" id="undo" type="button" aria-label="Urungkan">↶</button>
-    <button class="ib" id="redo" type="button" aria-label="Ulangi">↷</button>
-    <button class="ib" id="menu" type="button" aria-label="Menu">☰</button>
-  </div>
+<div class="app">
+  <div class="board" id="board" data-n="4"></div>
+  <aside class="side" id="side">
+    <div class="tb">
+      <button class="timer" id="timerBtn" type="button" aria-label="Mulai atau jeda waktu"><span class="ic" id="tIc">▶</span><span class="tm" id="tTm">00:00</span></button>
+      <button class="ib" id="undo" type="button" aria-label="Urungkan">↶</button>
+      <button class="ib" id="redo" type="button" aria-label="Ulangi">↷</button>
+      <button class="ib" id="menu" type="button" aria-label="Menu">☰</button>
+    </div>
+    <div class="hh">Riwayat poin</div>
+    <div class="plog" id="plog"></div>
+  </aside>
 </div>
+<div class="credit">Created by @syahruldj__</div>
 
 <div class="back" id="back" hidden></div>
 <section class="sheet" id="sheet" hidden aria-label="Menu">
   <div class="sh">
     <div class="tabs" role="tablist">
-      <button class="tab" role="tab" data-tab="poin" aria-selected="true">Riwayat poin</button>
-      <button class="tab" role="tab" data-tab="sesi" aria-selected="false">Riwayat sesi</button>
+      <button class="tab" role="tab" data-tab="sesi" aria-selected="true">Sesi</button>
       <button class="tab" role="tab" data-tab="atur" aria-selected="false">Atur</button>
     </div>
     <button class="ib" id="close" type="button" aria-label="Tutup">✕</button>
@@ -179,8 +177,8 @@ button { font: inherit; color: inherit; }
     { name: 'Pemain 1', color: '#e0457b' }, { name: 'Pemain 2', color: '#1fb5c9' },
     { name: 'Pemain 3', color: '#c98b5e' }, { name: 'Pemain 4', color: '#2f6bff' }
   ];
-  var S = { n: 4, ps: DEF.map(function (p) { return { name: p.name, color: p.color }; }), sc: [0, 0, 0, 0], k: 0, acts: [], redo: [], tm: { el: 0, run: false, at: 0 }, arch: [], flip: false };
-  var tab = 'poin', archOpen = false;
+  var S = { n: 4, ps: DEF.map(function (p) { return { name: p.name, color: p.color }; }), sc: [0, 0, 0, 0], acts: [], redo: [], tm: { el: 0, run: false, at: 0 }, arch: [], flip: false };
+  var tab = 'sesi', archOpen = false;
 
   function $(s) { return document.querySelector(s); }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
@@ -197,7 +195,6 @@ button { font: inherit; color: inherit; }
         if (p && /^#[0-9a-f]{6}$/i.test(p.color)) S.ps[i].color = p.color;
       });
       if (Array.isArray(d.sc)) S.sc = [0, 1, 2, 3].map(function (i) { var v = +d.sc[i]; return v >= 0 && v <= MAX ? Math.round(v) : 0; });
-      if (d.k >= 0) S.k = Math.min(99, Math.round(d.k));
       if (Array.isArray(d.acts)) S.acts = d.acts.filter(okAct);
       if (Array.isArray(d.redo)) S.redo = d.redo.filter(okAct);
       if (d.tm && d.tm.el >= 0) S.tm = { el: Math.min(LIMIT, +d.tm.el), run: !!d.tm.run, at: +d.tm.at || 0 };
@@ -205,7 +202,7 @@ button { font: inherit; color: inherit; }
       S.flip = !!d.flip;
     } catch (e) {}
   }
-  function okAct(a) { return a && (a.t === 'p' ? (a.i >= 0 && a.i < 4) : a.t === 'k') && (a.d === 1 || a.d === -1); }
+  function okAct(a) { return a && a.t === 'p' && a.i >= 0 && a.i < 4 && (a.d === 1 || a.d === -1); }
 
   /* ---------- Waktu ---------- */
   function elapsed() { var e = S.tm.el + (S.tm.run ? (Date.now() - S.tm.at) / 1000 : 0); return Math.max(0, Math.min(LIMIT, e)); }
@@ -255,7 +252,7 @@ button { font: inherit; color: inherit; }
       if (el.textContent !== String(S.sc[i])) { el.textContent = S.sc[i]; if (!noBump) { el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); } }
       el.classList.toggle('full', S.sc[i] >= MAX);
     }
-    $('#kVal').textContent = S.k;
+    renderLog();
     $('#undo').disabled = !S.acts.length; $('#redo').disabled = !S.redo.length;
     tick();
     if (!$('#sheet').hidden) renderSheet();
@@ -280,11 +277,7 @@ button { font: inherit; color: inherit; }
     flash(i, d > 0); save(); refresh();
     if (nv === MAX) toast('🏆 ' + nameOf(i) + ' mencapai ' + MAX + '!');
   }
-  function kChange(d) {
-    var nv = S.k + d; if (nv < 0 || nv > 99) return;
-    S.k = nv; S.acts.push({ t: 'k', d: d, at: Math.floor(elapsed()) }); S.redo = []; save(); refresh();
-  }
-  function apply(a, dir) { if (a.t === 'p') S.sc[a.i] += dir * a.d; else S.k += dir * a.d; }
+  function apply(a, dir) { S.sc[a.i] += dir * a.d; }
   function undo() {
     var a = S.acts.pop(); if (!a) return;
     apply(a, -1); S.redo.push(a); save(); refresh(true);
@@ -341,20 +334,32 @@ button { font: inherit; color: inherit; }
       return { name: nameOf(i), color: S.ps[i].color, score: S.sc[i], rank: r };
     });
   }
-  function clearSession() { S.sc = [0, 0, 0, 0]; S.k = 0; S.acts = []; S.redo = []; S.tm = { el: 0, run: false, at: 0 }; wake(false); }
+  function clearSession() { S.sc = [0, 0, 0, 0]; S.acts = []; S.redo = []; S.tm = { el: 0, run: false, at: 0 }; wake(false); }
   function endSession() {
-    var moves = S.acts.filter(function (a) { return a.t === 'p'; }).length;
+    var moves = S.acts.length;
     if (!moves) return;
     ask('Akhiri sesi?', 'Skor akhir dan durasi (' + fmtT(elapsed()) + ') disimpan ke Riwayat sesi, lalu papan dikosongkan untuk sesi baru.', 'Simpan & mulai baru').then(function (y) {
       if (!y) return;
-      S.arch.push({ ts: Date.now(), dur: Math.floor(elapsed()), k: S.k, moves: moves, rows: rowsNow() });
+      S.arch.push({ ts: Date.now(), dur: Math.floor(elapsed()), moves: moves, rows: rowsNow() });
       clearSession(); save(); refresh(true); toast('Sesi tersimpan'); tab = 'sesi'; renderSheet();
     });
   }
   function resetSession() {
-    ask('Reset tanpa menyimpan?', 'Semua skor, kocokan, waktu, dan riwayat poin sesi ini dihapus tanpa masuk Riwayat sesi.', 'Reset').then(function (y) {
+    ask('Reset tanpa menyimpan?', 'Semua skor, waktu, dan riwayat poin sesi ini dihapus tanpa masuk Riwayat sesi.', 'Reset').then(function (y) {
       if (!y) return; clearSession(); save(); refresh(true); toast('Skor direset');
     });
+  }
+
+  /* ---------- Panel riwayat poin ---------- */
+  function renderLog() {
+    var box = $('#plog'), keep = box.scrollTop;
+    if (!S.acts.length) { box.innerHTML = '<div class="empty">Belum ada poin.<br>Ketuk atau usap kotak.</div>'; return; }
+    var run = [0, 0, 0, 0], rows = S.acts.map(function (a) { run[a.i] += a.d; return { a: a, tot: run[a.i] }; }).reverse().slice(0, 150);
+    box.innerHTML = '<ul class="log">' + rows.map(function (r) {
+      var a = r.a;
+      return '<li><span class="tt">' + fmtT(a.at) + '</span><span class="nm"><span class="dot" style="background:' + S.ps[a.i].color + '"></span><span>' + esc(nameOf(a.i)) + '</span></span><span class="dd ' + (a.d > 0 ? 'up' : 'dw') + '">' + (a.d > 0 ? '+1' : '−1') + '</span><span class="tot">' + r.tot + '</span></li>';
+    }).join('') + '</ul>';
+    box.scrollTop = keep;
   }
 
   /* ---------- Sheet ---------- */
@@ -362,31 +367,17 @@ button { font: inherit; color: inherit; }
   function renderSheet() {
     document.querySelectorAll('.tab').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.tab === tab)); });
     var sb = $('#sb'), keep = sb.scrollTop, h = '';
-    if (tab === 'poin') {
+    if (tab === 'sesi') {
       h += '<div class="sum">';
       for (var i = 0; i < S.n; i++) h += '<span class="chip"><span class="dot" style="background:' + S.ps[i].color + '"></span>' + esc(nameOf(i)) + ' ' + S.sc[i] + '</span>';
-      h += '</div><div class="acts"><button class="btn pri" data-a="end"' + (S.acts.some(function (a) { return a.t === 'p'; }) ? '' : ' disabled') + '>Akhiri sesi</button>' +
-        '<button class="btn dng" data-a="reset"' + (S.acts.length || S.sc.some(Boolean) || S.tm.el ? '' : ' disabled') + '>Reset tanpa simpan</button></div>';
-      if (!S.acts.length) h += '<div class="empty">Belum ada poin. Ketuk atau usap kotak pemain untuk mulai.</div>';
-      else {
-        var run = [0, 0, 0, 0], kk = 0, rows = S.acts.map(function (a) {
-          if (a.t === 'p') { run[a.i] += a.d; return { a: a, tot: run[a.i] }; }
-          kk += a.d; return { a: a, tot: kk };
-        }).reverse();
-        h += '<ul class="log">' + rows.map(function (r) {
-          var a = r.a;
-          if (a.t === 'k') return '<li><span class="tt">' + fmtT(a.at) + '</span><span class="nm"><span class="dot" style="background:#888"></span><span>Kocokan</span></span><span class="dd ' + (a.d > 0 ? 'up' : 'dw') + '">' + (a.d > 0 ? '+1' : '−1') + '</span><span class="tot">' + r.tot + '</span></li>';
-          return '<li><span class="tt">' + fmtT(a.at) + '</span><span class="nm"><span class="dot" style="background:' + S.ps[a.i].color + '"></span><span>' + esc(nameOf(a.i)) + '</span></span><span class="dd ' + (a.d > 0 ? 'up' : 'dw') + '">' + (a.d > 0 ? '+1' : '−1') + '</span><span class="tot">' + r.tot + '</span></li>';
-        }).join('') + '</ul>';
-      }
-    } else if (tab === 'sesi') {
-      if (!S.arch.length) h += '<div class="empty">Belum ada sesi tersimpan. Pakai <b>Akhiri sesi</b> di tab Riwayat poin untuk menyimpan skor akhir dan durasi.</div>';
+      h += '</div><div class="acts"><button class="btn pri" data-a="end"' + (S.acts.length ? '' : ' disabled') + '>Akhiri sesi</button><button class="btn dng" data-a="reset"' + (S.acts.length || S.tm.el ? '' : ' disabled') + '>Reset tanpa simpan</button></div><h3>Riwayat sesi</h3>';
+      if (!S.arch.length) h += '<div class="empty">Belum ada sesi tersimpan. Pakai <b>Akhiri sesi</b> di atas untuk menyimpan skor akhir dan durasi.</div>';
       else {
         var list = S.arch.map(function (a, idx) { return { a: a, idx: idx }; }).reverse(), tot = list.length;
         if (tot > 4 && !archOpen) list = list.slice(0, 4);
         h += list.map(function (o) {
           var a = o.a;
-          return '<div class="ae"><div class="ah"><div class="ad">' + esc(dateLabel(a.ts)) + '<small>Durasi ' + fmtT(a.dur || 0) + ' · ' + (a.moves || 0) + ' poin · kocokan ' + (a.k || 0) + '</small></div><button class="btn sm dng" data-del="' + o.idx + '">Hapus</button></div>' +
+          return '<div class="ae"><div class="ah"><div class="ad">' + esc(dateLabel(a.ts)) + '<small>Durasi ' + fmtT(a.dur || 0) + ' · ' + (a.moves || 0) + ' poin</small></div><button class="btn sm dng" data-del="' + o.idx + '">Hapus</button></div>' +
             '<div class="arow" style="--c:' + a.rows.length + '">' + a.rows.map(function (r) {
               return '<div class="at' + (r.rank === 1 ? ' top' : '') + '"><span class="n">#' + r.rank + '</span><span class="p"><span class="dot" style="background:' + esc(r.color || '#888') + ';display:inline-block;margin-right:4px"></span>' + esc(r.name) + '</span><b>' + r.score + '</b></div>';
             }).join('') + '</div></div>';
@@ -435,8 +426,6 @@ button { font: inherit; color: inherit; }
   $('#back').addEventListener('click', closeSheet);
   $('#undo').addEventListener('click', undo);
   $('#redo').addEventListener('click', redo);
-  $('#kPlus').addEventListener('click', function () { kChange(1); });
-  $('#kMin').addEventListener('click', function () { kChange(-1); });
   $('#timerBtn').addEventListener('click', function () { S.tm.run ? tPause() : tStart(); });
   document.addEventListener('visibilitychange', function () { if (!document.hidden && S.tm.run) wake(true); tick(); });
 
